@@ -9,10 +9,16 @@ export class Moto extends Vehiculo{
         this.ruedas=ruedas;
     }
 
-    
+    public toJSON(): object {
+      return {
+          ...super.toJSON(),
+          ruedas: this.ruedas,
+          tipo: 'Moto'
+      };
+  }
 
-    toString():string{
-        return (`La moto: ${this.marca}, ${this.modelo}, ${this.fechaFabricacion} , ${this.patente} con ${this.ruedas}`)
+    public toString():string{
+        return `La moto: ${this.marca}, ${this.modelo}, ${this.fechaFabricacion} , ${this.patente} con ${this.ruedas}`
     }
 
     public get getmarca(): string {

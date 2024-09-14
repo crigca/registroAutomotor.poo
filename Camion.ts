@@ -8,8 +8,15 @@ export class Camion extends Vehiculo {
         this.ruedas=ruedas;
     }
 
-    toString():string{
-        return (`El camion: ${this.marca}, ${this.modelo}, ${this.fechaFabricacion} , ${this.patente} con ${this.ruedas}`)
+    public toJSON(): object {
+      return {
+          ...super.toJSON(),
+          ruedas: this.ruedas,
+          tipo: 'Camion'
+      };
+  }
+    public toString():string{
+        return `El camion: ${this.marca}, ${this.modelo}, ${this.fechaFabricacion} , ${this.patente} con ${this.ruedas}`
     }
     public get getmarca(): string {
         return this.marca;

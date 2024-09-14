@@ -7,8 +7,15 @@ export class Auto extends Vehiculo{
         super(marca, modelo,fechaFabricacion, patente);
         this.ruedas = ruedas;
     }
-    toString():string{
-        return (`El auto: ${this.marca}, ${this.modelo}, ${this.fechaFabricacion}, ${this.patente} con ${this.ruedas}`)
+    public toJSON(): object {
+      return {
+          ...super.toJSON(),
+          ruedas: this.ruedas,
+          tipo: 'Auto'
+      };
+  }
+    public toString():string{
+        return `El auto: ${this.marca}, ${this.modelo}, ${this.fechaFabricacion}, ${this.patente} con ${this.ruedas}`
     }
     public get getmarca(): string {
         return this.marca;
