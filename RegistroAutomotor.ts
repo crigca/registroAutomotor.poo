@@ -1,34 +1,57 @@
-import * as rls from "readline-sync";
+import { Vehiculo } from "./Vehiculo";
 import * as fs from "fs";
-import { Vehiculo } from "./Vehiculo.ts"
-import { Auto } from "./Auto.ts"
-import { Moto } from "./Moto.ts"
-import { Camion } from "./Camion.ts"
-import { RegistroAutomotor } from "./Registro.ts"
 
+export class RegistroAutomotor {
+    private Vehiculos: Vehiculo[] = [];
 
+    agregarVehiculo(vehiculo: Vehiculo): void {
+        this.Vehiculos.push(vehiculo);
+    }
 
+    buscarVehiculo(patente: string): Vehiculo | undefined {
+        return this.Vehiculos.find(v => v.getPatente() === patente);
+    }
 
-const registro = new RegistroAutomotor();
-const archivoJSON = './data.json';
+    modificarVehiculo(patente: string, datosActualizados: Partial<{ modelo: string, fechaFabricacion: number, marca: string, patente: string }>): void {
+        let vehiculo = this.buscarVehiculo(patente);
+        if (vehiculo) {
+            if ('modelo' in datosActualizados && typeof datosActualizados.modelo === 'string') {
+                vehiculo.setModelo(datosActualizados.modelo);
+            }
+            if ('fechaFabricacion' in datosActualizados && typeof datosActualizados.fechaFabricacion === 'number') {
+                vehiculo.setFechaFabricacion(datosActualizados.fechaFabricacion);
+            }
+            if ('marca' in datosActualizados && typeof datosActualizados.marca === 'string') {
+                vehiculo.setMarca(datosActualizados.marca);
+            }
+            if ('patente' in datosActualizados && typeof datosActualizados.patente === 'string') {
+                vehiculo.setPatente(datosActualizados.patente);
+            }
 
-let testCamion = new Camion(4, "Lambo", "Test", 2010, "KJ120")
+            this.guardarVehiculos();
+        }
+    }
 
-const archivoJSON = './data.json';
-const data = fs.readFileSync(archivoJSON, "utf-8");
-let vehiculos = JSON.parse(data);
+    eliminarVehiculo(patente: string): void {
+        this.Vehiculos = this.Vehiculos.filter(v => v.getPatente() !== patente);
+        this.guardarVehiculos;
+    }
 
-vehiculos.push({
-    tipo: "Camion",
-    marca: 
-})
+    mostrarVehiculos(): string {
+        return this.Vehiculos.map(v => JSON.stringify(v.toJSON(), null, 2)).join("\n");
+    }
 
+    guardarVehiculos(): void {
+        const vehiculosJSON = this.Vehiculos.map(v => v.toJSON());
+        fs.writeFileSync("./data.JSON", JSON.stringify(vehiculosJSON, null, 2));
+    }
 
+    cargarVehiculos(): void {
+        if (fs.existsSync("data.JSON")) {
+            const vehiculosGuardados = fs.readFileSync("data.JSON", "utf-8");
+            const vehiculosJSON = JSON.parse(vehiculosGuardados);
 
-
-
-//Funcion para agregar vehiculos
-registro.agregarVehiculo(testCamion)
-console.log(registro.mostrarVehiculos())
-export { RegistroAutomotor }
-
+            this.Vehiculos = vehiculosJSON.map((v: any) => new Vehiculo(v.marca, v.modelo, v.fechaFabricacion, v.patente));
+        }
+    }
+}
